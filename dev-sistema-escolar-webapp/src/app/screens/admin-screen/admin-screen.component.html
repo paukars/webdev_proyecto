@@ -1,0 +1,125 @@
+<div class="wrapper main-content-admins">
+  <div class="header-home-admins">
+  </div>
+  <div class="body-admins">
+    <!-- Encabezado con los títulos de bienvenida y rol del usuario -->
+    <div class="row mt-5 mb-5">
+      <div class="col-12">
+        <span class="title-perfil">Bienvenido {{name_user}}</span>
+        <br>
+        <span class="title-perfil">{{rol}}</span>
+      </div>
+    </div>
+
+    <!-- Contenedor principal para la tabla de administradores -->
+    <div class="container">
+      <div class="row mt-3 mb-5" style="text-align: center;">
+        <div class="col-12">
+          <div class="alert alert-primary" role="alert">
+            <span class="title-table">Lista de administradores registrados</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo de búsqueda -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar administrador</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Nombre, clave, email..." #input>
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Tabla de administradores -->
+      <ng-container *ngIf="lista_admins.length > 0; else noData">
+        <div class="table-scroll-wrapper">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort style="min-width: 1200px; width: 100%;">
+
+              <!-- Columna Clave Admin -->
+              <ng-container matColumnDef="clave_admin">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Clave </th>
+                <td mat-cell *matCellDef="let element"> {{element.clave_admin}} </td>
+              </ng-container>
+
+              <!-- Columna Nombre -->
+              <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+                <td mat-cell *matCellDef="let element"> {{element.first_name}} {{element.last_name}} </td>
+              </ng-container>
+
+              <!-- Columna Email -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Correo electrónico </th>
+                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+              </ng-container>
+
+              <!-- Columna Teléfono -->
+              <ng-container matColumnDef="telefono">
+                <th mat-header-cell *matHeaderCellDef> Teléfono </th>
+                <td mat-cell *matCellDef="let element"> {{element.telefono}} </td>
+              </ng-container>
+
+              <!-- Columna RFC -->
+              <ng-container matColumnDef="rfc">
+                <th mat-header-cell *matHeaderCellDef> RFC </th>
+                <td mat-cell *matCellDef="let element"> {{element.rfc}} </td>
+              </ng-container>
+
+              <!-- Columna Edad -->
+              <ng-container matColumnDef="edad">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Edad </th>
+                <td mat-cell *matCellDef="let element"> {{element.edad}} </td>
+              </ng-container>
+
+              <!-- Columna Ocupación -->
+              <ng-container matColumnDef="ocupacion">
+                <th mat-header-cell *matHeaderCellDef> Ocupación </th>
+                <td mat-cell *matCellDef="let element"> {{element.ocupacion}} </td>
+              </ng-container>
+
+              <!-- Columna Editar -->
+              <ng-container matColumnDef="editar">
+                <th mat-header-cell *matHeaderCellDef> Actualizar </th>
+                <td mat-cell *matCellDef="let element" class="td-editar">
+                  <i class="bi bi-pencil-square" (click)="goEditar(element.id)"></i>
+                </td>
+              </ng-container>
+
+              <!-- Columna Eliminar -->
+              <ng-container matColumnDef="eliminar">
+                <th mat-header-cell *matHeaderCellDef> Eliminar </th>
+                <td mat-cell *matCellDef="let element" class="td-eliminar">
+                  <i class="bi bi-trash3-fill" (click)="delete(element.id)"></i>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              <!-- Row shown when there is no matching data -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="9">No se encontraron resultados para "{{input.value}}"</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Seleccionar página de administradores" style="min-width: 1200px; width: 100%;">
+          </mat-paginator>
+        </div>
+      </ng-container>
+
+      <ng-template #noData>
+        <div class="col-12">
+          <div class="alert alert-warning" role="alert">
+            No hay administradores registrados.
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

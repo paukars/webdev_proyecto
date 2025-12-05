@@ -1,0 +1,156 @@
+<div class="wrapper main-content-maestros">
+  <div class="header-home-maestros"></div>
+  <div class="body-maestros">
+    <div class="row mt-5 mb-5">
+      <div class="col-12">
+        <span class="title-perfil">Bienvenido {{name_user}}</span>
+        <br>
+        <span class="title-perfil">{{rol}}</span>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row mt-3 mb-5" style="text-align: center;">
+        <div class="col-12">
+          <div class="alert alert-primary" role="alert">
+            <span class="title-table">Eventos académicos registrados</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3 align-items-center">
+        <div class="col-lg-8 col-12">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar evento</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Título, sede, público..." #input>
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <ng-container *ngIf="dataSource.data.length > 0; else noEventos">
+        <div class="table-scroll-wrapper">
+          <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort style="min-width: 1200px; width: 100%;">
+
+              <ng-container matColumnDef="titulo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Título </th>
+                <td mat-cell *matCellDef="let evento">
+                  {{evento.titulo}}
+                  <div class="evento-descripcion" *ngIf="evento.descripcion">{{ evento.descripcion }}</div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="programa">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Programa educativo </th>
+                <td mat-cell *matCellDef="let evento"> {{evento.programa_educativo}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="publico">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Público </th>
+                <td mat-cell *matCellDef="let evento"> {{getPublicoLabel(evento.publico_objetivo)}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="fecha">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+                <td mat-cell *matCellDef="let evento"> {{evento.fecha_evento | date: 'dd/MM/yyyy'}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="horario">
+                <th mat-header-cell *matHeaderCellDef> Horario </th>
+                <td mat-cell *matCellDef="let evento">
+                  {{formatearHora(evento.hora_inicio)}} - {{formatearHora(evento.hora_fin)}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="modalidad">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Modalidad </th>
+                <td mat-cell *matCellDef="let evento"> {{getModalidadLabel(evento.modalidad)}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="sede">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Sede </th>
+                <td mat-cell *matCellDef="let evento"> {{evento.sede}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="cupo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Cupo </th>
+                <td mat-cell *matCellDef="let evento">
+                  {{evento.total_asistentes || 0}} / {{evento.cupo_maximo}}
+                  <div class="evento-descripcion">
+                    Disponibles: {{evento.cupos_disponibles ?? (evento.cupo_maximo - (evento.total_asistentes || 0))}}
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container *ngIf="esAdmin" matColumnDef="asistentes">
+                <th mat-header-cell *matHeaderCellDef> Asistentes </th>
+                <td mat-cell *matCellDef="let evento" class="td-editar">
+                  <i class="bi bi-people-fill" (click)="verAsistentes(evento)"></i>
+                </td>
+              </ng-container>
+
+              <ng-container *ngIf="esAdmin" matColumnDef="editar">
+                <th mat-header-cell *matHeaderCellDef> Actualizar </th>
+                <td mat-cell *matCellDef="let evento" class="td-editar">
+                  <i class="bi bi-pencil-square" (click)="editarEvento(evento)"></i>
+                </td>
+              </ng-container>
+
+              <ng-container *ngIf="esAdmin" matColumnDef="eliminar">
+                <th mat-header-cell *matHeaderCellDef> Eliminar </th>
+                <td mat-cell *matCellDef="let evento" class="td-eliminar">
+                  <i class="bi bi-trash3-fill" (click)="confirmarEliminar(evento)"></i>
+                </td>
+              </ng-container>
+
+              <ng-container *ngIf="!esAdmin" matColumnDef="registro">
+                <th mat-header-cell *matHeaderCellDef> Registro </th>
+                <td mat-cell *matCellDef="let evento">
+                  <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-primary btn-sm"
+                      *ngIf="!evento.inscrito"
+                      [disabled]="(evento.cupos_disponibles ?? 0) <= 0"
+                      (click)="registrarEvento(evento)">
+                      Registrarme
+                    </button>
+                    <button class="btn btn-danger btn-sm"
+                      *ngIf="evento.inscrito"
+                      (click)="cancelarRegistro(evento)">
+                      Cancelar registro
+                    </button>
+                    <small *ngIf="evento.inscrito" class="text-success">
+                      Estado: {{ evento.confirmado ? 'Confirmado' : 'Pendiente' }}
+                    </small>
+                    <small *ngIf="!evento.inscrito && (evento.cupos_disponibles ?? 0) <= 0" class="text-danger">
+                      Cupo completo
+                    </small>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">No se encontraron resultados para "{{input.value}}"</td>
+              </tr>
+            </table>
+          </div>
+
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Seleccionar página de eventos" style="min-width: 1200px; width: 100%;">
+          </mat-paginator>
+        </div>
+      </ng-container>
+
+      <ng-template #noEventos>
+        <div class="col-12">
+          <div class="alert alert-warning" role="alert">
+            No hay eventos registrados.
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

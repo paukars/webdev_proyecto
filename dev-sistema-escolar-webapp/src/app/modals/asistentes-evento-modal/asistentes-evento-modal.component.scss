@@ -1,0 +1,23 @@
+.asistentes-modal-content {
+  min-width: 320px;
+
+  table {
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+.asistentes-loading,
+.asistentes-error,
+.asistentes-empty {
+  padding: 16px;
+  text-align: center;
+}
+
+.asistentes-error {
+  color: #d32f2f;
+}
+
+.asistentes-empty {
+  color: #5f6368;
+}

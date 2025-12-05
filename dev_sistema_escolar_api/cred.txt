@@ -1,0 +1,79 @@
+===============================================
+CREDENCIALES DEL SISTEMA ESCOLAR
+Usuarios de Prueba Generados
+===============================================
+
+========== ADMINISTRADORES (11) ==========
+
+admin1@escuela.edu.mx / admin1123
+admin2@escuela.edu.mx / admin2123
+admin3@escuela.edu.mx / admin3123
+admin4@escuela.edu.mx / admin4123
+admin5@escuela.edu.mx / admin5123
+admin6@escuela.edu.mx / admin6123
+admin7@escuela.edu.mx / admin7123
+admin8@escuela.edu.mx / admin8123
+admin9@escuela.edu.mx / admin9123
+admin10@escuela.edu.mx / admin10123
+admin11@escuela.edu.mx / admin11123
+
+========== MAESTROS (15) ==========
+
+maestro1@escuela.edu.mx / maestro1123
+maestro2@escuela.edu.mx / maestro2123
+maestro3@escuela.edu.mx / maestro3123
+maestro4@escuela.edu.mx / maestro4123
+maestro5@escuela.edu.mx / maestro5123
+maestro6@escuela.edu.mx / maestro6123
+maestro7@escuela.edu.mx / maestro7123
+maestro8@escuela.edu.mx / maestro8123
+maestro9@escuela.edu.mx / maestro9123
+maestro10@escuela.edu.mx / maestro10123
+maestro11@escuela.edu.mx / maestro11123
+maestro12@escuela.edu.mx / maestro12123
+maestro13@escuela.edu.mx / maestro13123
+maestro14@escuela.edu.mx / maestro14123
+maestro15@escuela.edu.mx / maestro15123
+
+========== ALUMNOS (25) ==========
+
+alumno1@escuela.edu.mx / alumno1123
+alumno2@escuela.edu.mx / alumno2123
+alumno3@escuela.edu.mx / alumno3123
+alumno4@escuela.edu.mx / alumno4123
+alumno5@escuela.edu.mx / alumno5123
+alumno6@escuela.edu.mx / alumno6123
+alumno7@escuela.edu.mx / alumno7123
+alumno8@escuela.edu.mx / alumno8123
+alumno9@escuela.edu.mx / alumno9123
+alumno10@escuela.edu.mx / alumno10123
+alumno11@escuela.edu.mx / alumno11123
+alumno12@escuela.edu.mx / alumno12123
+alumno13@escuela.edu.mx / alumno13123
+alumno14@escuela.edu.mx / alumno14123
+alumno15@escuela.edu.mx / alumno15123
+alumno16@escuela.edu.mx / alumno16123
+alumno17@escuela.edu.mx / alumno17123
+alumno18@escuela.edu.mx / alumno18123
+alumno19@escuela.edu.mx / alumno19123
+alumno20@escuela.edu.mx / alumno20123
+alumno21@escuela.edu.mx / alumno21123
+alumno22@escuela.edu.mx / alumno22123
+alumno23@escuela.edu.mx / alumno23123
+alumno24@escuela.edu.mx / alumno24123
+alumno25@escuela.edu.mx / alumno25123
+
+===============================================
+TOTAL: 51 USUARIOS
+===============================================
+
+FORMATO: email / contraseña
+
+NOTAS:
+- Todas las contraseñas siguen el patrón: [rol][numero]123
+- Los emails siguen el patrón: [rol][numero]@escuela.edu.mx
+- Los administradores tienen claves: ADM001 a ADM011
+- Los maestros tienen IDs: MAE001 a MAE015
+- Los alumnos tienen matrículas generadas aleatoriamente
+
+===============================================

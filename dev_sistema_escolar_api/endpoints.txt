@@ -1,0 +1,404 @@
+===============================================
+API REST - SISTEMA ESCOLAR BUAP
+COMANDOS cURL PARA PRUEBAS
+===============================================
+
+BASE_URL: http://127.0.0.1:8000
+
+NOTAS IMPORTANTES:
+- Reemplaza {TOKEN} con el token obtenido del login
+- Reemplaza {ID} con el ID del registro que quieras consultar/modificar
+- Los ejemplos usan las credenciales generadas
+
+===============================================
+1. AUTENTICACIÓN
+===============================================
+
+# 1.1 LOGIN - Administrador
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin1@escuela.edu.mx",
+    "password": "admin1123"
+  }'
+
+# 1.2 LOGIN - Maestro
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "maestro1@escuela.edu.mx",
+    "password": "maestro1123"
+  }'
+
+# 1.3 LOGIN - Alumno
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "alumno1@escuela.edu.mx",
+    "password": "alumno1123"
+  }'
+
+# 1.4 LOGOUT
+curl -X GET http://127.0.0.1:8000/logout/ \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+2. ADMINISTRADORES
+===============================================
+
+# 2.1 LISTAR TODOS LOS ADMINISTRADORES (Paginado)
+curl -X GET http://127.0.0.1:8000/lista-admins/ \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 2.2 LISTAR ADMINISTRADORES - Página 2
+curl -X GET "http://127.0.0.1:8000/lista-admins/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 2.3 OBTENER ADMINISTRADOR POR ID
+curl -X GET "http://127.0.0.1:8000/administrador/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 2.4 CREAR NUEVO ADMINISTRADOR
+curl -X POST http://127.0.0.1:8000/administrador/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rol": "administrador",
+    "first_name": "Nuevo",
+    "last_name": "Administrador",
+    "email": "nuevoadmin@escuela.edu.mx",
+    "password": "nuevoadmin123",
+    "confirmar_password": "nuevoadmin123",
+    "clave_admin": "ADM999",
+    "telefono": "(222) 999-9999",
+    "rfc": "NEAD990101ABC",
+    "edad": 35,
+    "ocupacion": "Coordinador"
+  }'
+
+# 2.5 ACTUALIZAR ADMINISTRADOR
+curl -X PUT http://127.0.0.1:8000/administrador/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {TOKEN}" \
+  -d '{
+    "id": 1,
+    "first_name": "Juan",
+    "last_name": "Pérez Actualizado",
+    "clave_admin": "ADM001",
+    "telefono": "(222) 111-1111",
+    "rfc": "PEPJ900101ABC",
+    "edad": 35,
+    "ocupacion": "Director General"
+  }'
+
+# 2.6 ELIMINAR ADMINISTRADOR
+curl -X DELETE "http://127.0.0.1:8000/administrador/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+3. MAESTROS
+===============================================
+
+# 3.1 LISTAR TODOS LOS MAESTROS (Paginado)
+curl -X GET http://127.0.0.1:8000/lista-maestros/ \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 3.2 LISTAR MAESTROS - Página 2
+curl -X GET "http://127.0.0.1:8000/lista-maestros/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 3.3 OBTENER MAESTRO POR ID
+curl -X GET "http://127.0.0.1:8000/maestros/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 3.4 CREAR NUEVO MAESTRO
+curl -X POST http://127.0.0.1:8000/maestros/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rol": "maestro",
+    "first_name": "Nuevo",
+    "last_name": "Maestro",
+    "email": "nuevomaestro@escuela.edu.mx",
+    "password": "nuevomaestro123",
+    "confirmar_password": "nuevomaestro123",
+    "id_trabajador": "MAE999",
+    "fecha_nacimiento": "1985-05-15",
+    "telefono": "(222) 888-8888",
+    "rfc": "NEMA850515XYZ",
+    "cubiculo": "C-999",
+    "area_investigacion": "Inteligencia Artificial",
+    "materias_json": ["Machine Learning", "Deep Learning", "Visión por Computadora"]
+  }'
+
+# 3.5 ELIMINAR MAESTRO
+curl -X DELETE "http://127.0.0.1:8000/maestros/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+4. ALUMNOS
+===============================================
+
+# 4.1 LISTAR TODOS LOS ALUMNOS (Paginado)
+curl -X GET http://127.0.0.1:8000/lista-alumnos/ \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 4.2 LISTAR ALUMNOS - Página 2
+curl -X GET "http://127.0.0.1:8000/lista-alumnos/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 4.3 LISTAR ALUMNOS - Página 3
+curl -X GET "http://127.0.0.1:8000/lista-alumnos/?page=3" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 4.4 OBTENER ALUMNO POR ID
+curl -X GET "http://127.0.0.1:8000/alumnos/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 4.5 CREAR NUEVO ALUMNO
+curl -X POST http://127.0.0.1:8000/alumnos/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rol": "alumno",
+    "first_name": "Nuevo",
+    "last_name": "Alumno",
+    "email": "nuevoalumno@escuela.edu.mx",
+    "password": "nuevoalumno123",
+    "confirmar_password": "nuevoalumno123",
+    "matricula": "201999999",
+    "curp": "NEAL000101HPLSMN01",
+    "rfc": "NEAL000101ABC",
+    "fecha_nacimiento": "2000-01-01",
+    "edad": 24,
+    "telefono": "(222) 777-7777",
+    "ocupacion": "Estudiante"
+  }'
+
+# 4.6 ELIMINAR ALUMNO
+curl -X DELETE "http://127.0.0.1:8000/alumnos/?id=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+5. ESTADÍSTICAS
+===============================================
+
+# 5.1 OBTENER TOTAL DE USUARIOS POR ROL
+curl -X GET http://127.0.0.1:8000/total-usuarios/ \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+6. EJEMPLOS CON MÚLTIPLES USUARIOS
+===============================================
+
+# 6.1 LOGIN CON ADMIN2
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin2@escuela.edu.mx",
+    "password": "admin2123"
+  }'
+
+# 6.2 LOGIN CON MAESTRO5
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "maestro5@escuela.edu.mx",
+    "password": "maestro5123"
+  }'
+
+# 6.3 LOGIN CON ALUMNO10
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "alumno10@escuela.edu.mx",
+    "password": "alumno10123"
+  }'
+
+===============================================
+7. FLUJO COMPLETO DE PRUEBA
+===============================================
+
+# PASO 1: Login
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin1@escuela.edu.mx",
+    "password": "admin1123"
+  }'
+
+# RESPUESTA ESPERADA:
+# {
+#   "id": 1,
+#   "first_name": "Admin",
+#   "last_name": "Uno",
+#   "email": "admin1@escuela.edu.mx",
+#   "token": "abc123xyz456...",
+#   "rol": "administrador"
+# }
+
+# PASO 2: Copiar el token y usarlo en las siguientes peticiones
+
+# PASO 3: Listar Administradores
+curl -X GET http://127.0.0.1:8000/lista-admins/ \
+  -H "Authorization: Bearer abc123xyz456..."
+
+# PASO 4: Listar Maestros
+curl -X GET http://127.0.0.1:8000/lista-maestros/ \
+  -H "Authorization: Bearer abc123xyz456..."
+
+# PASO 5: Listar Alumnos
+curl -X GET http://127.0.0.1:8000/lista-alumnos/ \
+  -H "Authorization: Bearer abc123xyz456..."
+
+# PASO 6: Ver estadísticas
+curl -X GET http://127.0.0.1:8000/total-usuarios/ \
+  -H "Authorization: Bearer abc123xyz456..."
+
+# PASO 7: Logout
+curl -X GET http://127.0.0.1:8000/logout/ \
+  -H "Authorization: Bearer abc123xyz456..."
+
+===============================================
+8. PRUEBAS DE PAGINACIÓN
+===============================================
+
+# 8.1 Primera página de administradores (10 por página)
+curl -X GET "http://127.0.0.1:8000/lista-admins/?page=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.2 Segunda página de administradores
+curl -X GET "http://127.0.0.1:8000/lista-admins/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.3 Primera página de maestros
+curl -X GET "http://127.0.0.1:8000/lista-maestros/?page=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.4 Segunda página de maestros
+curl -X GET "http://127.0.0.1:8000/lista-maestros/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.5 Primera página de alumnos
+curl -X GET "http://127.0.0.1:8000/lista-alumnos/?page=1" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.6 Segunda página de alumnos
+curl -X GET "http://127.0.0.1:8000/lista-alumnos/?page=2" \
+  -H "Authorization: Bearer {TOKEN}"
+
+# 8.7 Tercera página de alumnos
+curl -X GET "http://127.0.0.1:8000/lista-alumnos/?page=3" \
+  -H "Authorization: Bearer {TOKEN}"
+
+===============================================
+9. PRUEBAS DE VALIDACIÓN (ERRORES ESPERADOS)
+===============================================
+
+# 9.1 Login con credenciales incorrectas
+curl -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin1@escuela.edu.mx",
+    "password": "incorrecta"
+  }'
+
+# 9.2 Acceder sin token (debe dar 403 Forbidden)
+curl -X GET http://127.0.0.1:8000/lista-admins/
+
+# 9.3 Crear usuario con email duplicado
+curl -X POST http://127.0.0.1:8000/administrador/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rol": "administrador",
+    "email": "admin1@escuela.edu.mx",
+    "password": "test123",
+    "confirmar_password": "test123"
+  }'
+
+# 9.4 Crear usuario con contraseñas que no coinciden (validación frontend)
+curl -X POST http://127.0.0.1:8000/administrador/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rol": "administrador",
+    "email": "test@test.com",
+    "password": "pass123",
+    "confirmar_password": "pass456"
+  }'
+
+===============================================
+10. SCRIPTS BASH PARA AUTOMATIZACIÓN
+===============================================
+
+# 10.1 Script para obtener token automáticamente
+#!/bin/bash
+TOKEN=$(curl -s -X POST http://127.0.0.1:8000/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin1@escuela.edu.mx","password":"admin1123"}' \
+  | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+echo "Token obtenido: $TOKEN"
+
+# 10.2 Usar el token en otras peticiones
+curl -X GET http://127.0.0.1:8000/lista-admins/ \
+  -H "Authorization: Bearer $TOKEN"
+
+===============================================
+11. FORMATO DE RESPUESTAS ESPERADAS
+===============================================
+
+# LOGIN EXITOSO:
+{
+  "id": 1,
+  "first_name": "Admin",
+  "last_name": "Uno",
+  "email": "admin1@escuela.edu.mx",
+  "token": "1234567890abcdef...",
+  "rol": "administrador"
+}
+
+# LISTA PAGINADA:
+{
+  "count": 11,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "user": {
+        "id": 1,
+        "first_name": "Admin",
+        "last_name": "Uno",
+        "email": "admin1@escuela.edu.mx"
+      },
+      "clave_admin": "ADM001",
+      ...
+    }
+  ]
+}
+
+# TOTAL USUARIOS:
+{
+  "admins": 11,
+  "maestros": 15,
+  "alumnos": 25
+}
+
+===============================================
+CREDENCIALES DISPONIBLES
+===============================================
+
+ADMINISTRADORES (11):
+admin1@escuela.edu.mx / admin1123
+admin2@escuela.edu.mx / admin2123
+...hasta admin11
+
+MAESTROS (15):
+maestro1@escuela.edu.mx / maestro1123
+maestro2@escuela.edu.mx / maestro2123
+...hasta maestro15
+
+ALUMNOS (25):
+alumno1@escuela.edu.mx / alumno1123
+alumno2@escuela.edu.mx / alumno2123
+...hasta alumno25
+
+===============================================
+FIN DEL DOCUMENTO
+===============================================

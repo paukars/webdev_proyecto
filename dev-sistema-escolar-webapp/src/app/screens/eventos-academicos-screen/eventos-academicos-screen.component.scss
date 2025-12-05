@@ -1,0 +1,16 @@
+.search-field {
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .search-field {
+    max-width: 520px;
+  }
+}
+
+.evento-descripcion {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #5f6368;
+}
