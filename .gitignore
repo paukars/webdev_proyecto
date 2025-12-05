@@ -1,0 +1,9 @@
+  node_modules/
+  dist/
+  dev_sistema_frontend.zip
+  dev_sistema_backend.zip
+  assets.zip
+  *.pyc
+  __pycache__/
+  .env
+  *.log

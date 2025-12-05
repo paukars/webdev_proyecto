@@ -1,0 +1,143 @@
+REPORTE DEL PROYECTO "SISTEMA ESCOLAR" (API + FRONTEND)
+========================================================
+
+1. INTRODUCCIÓN
+----------------
+Este documento describe la arquitectura, componentes principales y flujos del sistema escolar desarrollado. Incluye detalles de backend (Django REST) y frontend (Angular), servicios implementados, ejemplos de código y lineamientos para despliegue en PythonAnywhere.
+
+2. ARQUITECTURA GENERAL
+-----------------------
+- **Backend:** Django 5 + Django REST Framework, expuesto como API JSON. Utiliza MySQL en desarrollo/local y en producción (PythonAnywhere). Endpoints seguros mediante autenticación por token (Bearer) y sesiones.
+- **Frontend:** Angular 16 con Angular Material, Bootstrap y Chart.js. Consume la API para operaciones CRUD de alumnos, maestros, administradores y eventos.
+- **Despliegue:**
+  - Backend en `/home/paukars/dev_sistema_escolar_api` dentro de virtualenv (`~/.virtualenvs/devsistema`).
+  - Frontend compilado (`dist/dev-sistema-escolar-webapp`) servido como sitio estático bajo `/frontend/` y `/assets/` en PythonAnywhere.
+  - Base de datos MySQL en `paukars.mysql.pythonanywhere-services.com` con esquema `paukars$sistema_escolar` (usuario `paukars`).
+
+Diagrama conceptual (API <-> DB <-> Frontend):
+[Usuario] ⇄ [Angular SPA] ⇄ [REST API Django] ⇄ [MySQL]
+
+3. MODELOS Y ENTIDADES CLAVE (backend)
+--------------------------------------
+- `Administradores`, `Maestros`, `Alumnos`: heredan datos básicos, enlazados a `django.contrib.auth.models.User`.
+- `EventoAcademico`: título, descripción, sede, público objetivo, programa educativo, fecha, horario, cupo máximo, modalidad, usuario creador.
+- `EventoRegistro`: relación N:M entre usuarios y eventos, con banderas de confirmación de asistencia (solo admins pueden confirmarla).
+
+Ejemplo (models.py):
+```
+class EventoRegistro(models.Model):
+    evento = models.ForeignKey(EventoAcademico, related_name="registros", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="eventos_registrados", on_delete=models.CASCADE)
+    confirmado = models.BooleanField(default=False)
+```
+
+4. SERVICIOS/ENDPOINTS IMPLEMENTADOS
+------------------------------------
+**Usuarios/Admin/Alumnos/Maestros** (`dev_sistema_escolar_api/dev_sistema_escolar_api/views/`):
+- CRUD completo, autenticación requerida para GET/PUT/DELETE. Registro abierto para POST (con validaciones).
+- `/lista-<rol>/` para listados; `/` para creación/edición/eliminación/adaptación de cada entidad.
+- Endpoint agregado `total-usuarios/` que devuelve conteos y promedios de edad por rol (admins, maestros, alumnos).
+
+**Eventos académicos (`views/eventos.py`):**
+- `GET /lista-eventos-academicos/`: devuelve eventos con cupos, asistentes, y estado de registro para el usuario actual.
+- `GET /eventos-academicos/`: detalles de un evento específico.
+- `POST/PUT/DELETE /eventos-academicos/`: CRUD completo (solo usuarios autenticados con permisos; admins pueden eliminar/editar, maestros/alumnos registran). Validaciones: fecha futura, hora fin > hora inicio, cupo máximo, público/programa coherente.
+- `POST/DELETE /eventos-academicos/registro/`: registrar/cancelar asistencia. Solo roles alumno/maestro pueden registrar; admins pueden ver confirmaciones (`GET`) y marcarlas (`PATCH`).
+
+Fragmento (EventoRegistroView.patch):
+```
+registro = get_object_or_404(EventoRegistro, id=registro_id)
+registro.confirmado = bool(confirmado)
+registro.confirmado_en = timezone.now() if registro.confirmado else None
+```
+
+5. FRONTEND (Angular) - COMPONENTES PRINCIPALES
+----------------------------------------------
+- `src/app/screens/login-screen`: formulario de inicio de sesión (Angular Material). Al autenticarse, guarda token y datos en cookies.
+- `src/app/screens/maestros-screen` y `alumnos-screen`: tablas `mat-table` con paginación, ordenamiento y filtrado en frontend. Permite editar/eliminar con permisos por rol.
+- `src/app/screens/registro-usuarios-screen`: formulario dinâmico que reutiliza parciales (`partials/registro-*`) para crear/editar administradores, alumnos, maestros, y ahora eventos (nuevo componente `RegistroEventos`).
+- `src/app/screens/eventos-academicos-screen`: tabla con resumen de eventos (cupos, fechas). Alumnos/Maestros pueden registrarse y cancelar; Admins pueden editar, borrar y ver asistentes. Modal `AsistentesEventoModal` muestra la lista con check para confirmar asistencia.
+- `src/app/screens/graficas-screen`: gráficas de usuarios (pastel), eventos (línea/barras) y edad promedio (barras horizontales) usando Chart.js y `datalabels`.
+
+6. FLUJO DEL SISTEMA
+--------------------
+1. Usuario ingresa a `/frontend/` → se muestra login; al autenticarse se redirige según rol.
+2. Navbar lateral (`partials/navbar-user` y `partials/sidebar`) despliega opciones filtradas por rol (Admin: todo; Maestro: eventos, maestros; Alumno: alumnos, eventos).
+3. CRUD de usuarios via formularios con validaciones (por ejemplo, RFC, email, contraseñas, fechas). Angular invoca servicios (`services/*.ts`) que consumen la API con token Bearer.
+4. Gestión de eventos: listado (MatTable) → Admin puede abrir formulario de evento, registrar, editar, eliminar. Roles alumno/maestro pueden inscribirse; admin ve asistentes y confirma.
+5. Graficación: Angular llama `/total-usuarios/` y `/lista-eventos-academicos/` para poblar charts (usuarios por rol, eventos por público, asistentes por evento, edad promedio).
+
+7. DESPLIEGUE EN PYTHONANYWHERE
+--------------------------------
+Pasos efectuados:
+- Subir backend ZIP (`dev_sistema_backend.zip`), desempacar en `/home/paukars/dev_sistema_escolar_api`.
+- Crear virtualenv `~/.virtualenvs/devsistema`, instalar `pip install -r requirements.txt`.
+- Configurar `DATABASES` de Django para MySQL de PythonAnywhere, añadir `STATIC_ROOT` y `STATICFILES_DIRS`.
+- Ejecutar `python manage.py migrate`, `python manage.py collectstatic`, y crear superusuario (`python manage.py createsuperuser`).
+- En Web tab: path de código `/home/paukars/dev_sistema_escolar_api`, virtualenv `/home/paukars/.virtualenvs/devsistema`, entry `/static/ → /home/paukars/dev_sistema_escolar_api/staticfiles`.
+- Subir y servir frontend: `dev_sistema_frontend.zip` (con `ng build --base-href /frontend/`), ubicado en `/home/paukars/dev-sistema-escolar-webapp`. Entradas de static files:
+  - `/frontend/ → /home/paukars/dev-sistema-escolar-webapp`
+  - `/assets/ → /home/paukars/assets` (carpeta subida por separado para rutas absolutas).
+- Reemplazo de base de datos: export local `mysqldump -u root -p dev_sistema_escolar_db > dev_sistema_dump.sql`, import en PythonAnywhere `mysql -u paukars -p -h ... 'paukars$sistema_escolar' < dev_sistema_dump.sql`.
+
+8. CAPTURAS Y REFERENCIAS VISUALES
+----------------------------------
+(No se adjuntan imágenes en este TXT. Recomendación: capturar las pantallas principales: login, lista de usuarios, formulario de eventos, modal de asistentes, gráficas. Incluirlas en reporte PDF final citando las rutas `src/app/screens/...`).
+
+9. FRAGMENTOS DE CÓDIGO RELEVANTES
+-----------------------------------
+**Angular - registro de eventos (src/app/partials/registro-eventos/registro-eventos.component.ts):**
+```
+public guardarEvento(): void {
+  const esEdicion = this.modo === 'edit';
+  this.errors = this.eventosService.validarEvento(this.eventoForm);
+  if (Object.keys(this.errors).length > 0) return;
+
+  const payload = this.prepararPayload();
+  if (esEdicion) {
+    const dialogRef = this.dialog.open(ConfirmacionEventoModalComponent, {
+      data: { title: 'Actualizar evento', ... }
+    });
+    dialogRef.afterClosed().subscribe(confirmado => {
+      if (confirmado) this.eventosService.actualizarEvento(payload).subscribe(...);
+    });
+  } else {
+    this.eventosService.crearEvento(payload).subscribe(...);
+  }
+}
+```
+
+**Angular - eventos screen (src/app/screens/eventos-academicos-screen/eventos-academicos-screen.component.ts):**
+```
+public registrarEvento(evento: EventoAcademico): void {
+  if (!this.puedeRegistrarse()) return;
+  this.eventosService.registrarAsistencia(evento.id).subscribe(
+    () => { alert('Te has registrado'); this.obtenerEventos(); },
+    (error) => { alert(error?.error?.detail || 'No se pudo registrar'); }
+  );
+}
+```
+
+**Python - total de usuarios (dev_sistema_escolar_api/views/users.py):**
+```
+return Response({
+  "admins": total_admins,
+  "maestros": total_maestros,
+  "alumnos": total_alumnos,
+  "promedio_admins": promedio_admins,
+  ...
+}, status=200)
+```
+
+10. CONCLUSIONES Y TAREAS PENDIENTES
+------------------------------------
+- El sistema está desplegado con los datos sincronizados y frontend consumiendo el backend live (`https://paukars.pythonanywhere.com`).
+- Para mejoras futuras: ajustar Angular para usar rutas relativas (evitar `/assets` absoluto), crear fallback view en Django para manejar `frontend/*` sin 404, agregar tests automáticos y CI/CD.
+
+11. REFERENCIAS
+---------------
+- Documentación Django: https://docs.djangoproject.com/en/5.0/
+- Django REST Framework: https://www.django-rest-framework.org/
+- Angular Deployment: https://angular.io/guide/deployment
+- PythonAnywhere manual config: https://help.pythonanywhere.com/pages/ManualConfig/
+

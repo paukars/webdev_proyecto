@@ -1,0 +1,91 @@
+===============================================
+Pasos en Postman para editar y eliminar usuarios
+===============================================
+BASE_URL: http://127.0.0.1:8000
+1) Primero haz login (POST /login/) y copia el token devuelto.
+2) En cada request coloca `Content-Type: application/json` y `Authorization: Bearer <token>`.
+
+-----------------------------------------------
+1. Actualizar administrador
+-----------------------------------------------
+- Método: PUT
+- URL: http://127.0.0.1:8000/admin/
+- Headers: Content-Type (application/json) y Authorization (Bearer token)
+- Body (JSON crudo):
+{
+  "id": 1,
+  "rol": "administrador",
+  "first_name": "Juan",
+  "last_name": "Pérez Actualizado",
+  "clave_admin": "ADM001",
+  "telefono": "(222) 111-1111",
+  "rfc": "PEPJ900101ABC",
+  "edad": 35,
+  "ocupacion": "Director General"
+}
+
+-----------------------------------------------
+2. Eliminar administrador
+-----------------------------------------------
+- Método: DELETE
+- URL: http://127.0.0.1:8000/admin/?id=1
+- Headers: Authorization (Bearer token)
+- Body: vacío
+
+-----------------------------------------------
+3. Actualizar maestro
+-----------------------------------------------
+- Método: PUT
+- URL: http://127.0.0.1:8000/maestros/
+- Headers: Content-Type y Authorization
+- Body (JSON):
+{
+  "id": 5,
+  "rol": "maestro",
+  "first_name": "Laura",
+  "last_name": "Ramírez",
+  "id_trabajador": "MAE005",
+  "fecha_nacimiento": "1985-05-15",
+  "telefono": "(222) 555-1212",
+  "rfc": "LARR850515XYZ",
+  "cubiculo": "C-205",
+  "area_investigacion": "Inteligencia Artificial",
+  "materias_json": ["Aplicaciones Web", "Bases de datos"]
+}
+
+-----------------------------------------------
+4. Eliminar maestro
+-----------------------------------------------
+- Método: DELETE
+- URL: http://127.0.0.1:8000/maestros/?id=5
+- Headers: Authorization
+- Body: vacío
+
+-----------------------------------------------
+5. Actualizar alumno
+-----------------------------------------------
+- Método: PUT
+- URL: http://127.0.0.1:8000/alumnos/
+- Headers: Content-Type y Authorization
+- Body (JSON):
+{
+  "id": 10,
+  "rol": "alumno",
+  "matricula": "20230010",
+  "first_name": "María",
+  "last_name": "López",
+  "fecha_nacimiento": "2003-02-01",
+  "curp": "LOPM030201MDFRPS09",
+  "rfc": "LOPM030201ABC",
+  "edad": 21,
+  "telefono": "(222) 777-0000",
+  "ocupacion": "Estudiante"
+}
+
+-----------------------------------------------
+6. Eliminar alumno
+-----------------------------------------------
+- Método: DELETE
+- URL: http://127.0.0.1:8000/alumnos/?id=10
+- Headers: Authorization
+- Body: vacío
